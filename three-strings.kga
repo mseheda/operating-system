@@ -1,0 +1,88 @@
+DEBUG_OFF
+
+var s1
+var s2
+var s3
+var len_s1
+var ls2
+var len_s3
+var max_str
+
+write "Enter s1: " to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+
+write OP_READ_INPUT to REG_OP
+cpu_exec
+copy KEYBOARD_BUFFER to var:s1
+
+write "Enter s2: " to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+
+write OP_READ_INPUT to REG_OP
+cpu_exec
+copy KEYBOARD_BUFFER to var:s2
+
+write "Enter s3: " to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+
+write OP_READ_INPUT to REG_OP
+cpu_exec
+copy KEYBOARD_BUFFER to var:s3
+
+copy var:s1 to REG_A
+write OP_GET_LENGTH to REG_OP
+cpu_exec
+copy REG_RES to var:len_s1
+
+copy var:s2 to REG_A
+write OP_GET_LENGTH to REG_OP
+cpu_exec
+copy REG_RES to var:ls2
+
+copy var:s3 to REG_A
+write OP_GET_LENGTH to REG_OP
+cpu_exec
+copy REG_RES to var:len_s3
+
+copy var:s1 to var:max_str
+
+copy var:len_s1 to REG_A
+copy var:ls2 to REG_B
+write OP_CMP_LT to REG_OP
+cpu_exec
+jump_if label:set_max_s2  
+
+copy var:len_s1 to REG_A
+copy var:len_s3 to REG_B
+write OP_CMP_LT to REG_OP
+cpu_exec
+jump_if label:set_max_s3
+jump label:print_result
+
+label set_max_s2
+copy var:s2 to var:max_str
+
+copy var:len_s3 to REG_A
+copy var:ls2 to REG_B
+write OP_CMP_LT to REG_OP
+cpu_exec
+jump_if label:print_result
+
+label set_max_s3
+copy var:s3 to var:max_str
+jump label:print_result
+
+label print_result
+write "Longest string: " to DISPLAY_BUFFER
+write OP_DISPLAY to REG_OP
+cpu_exec
+
+copy var:max_str to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+
+write OP_HALT to REG_OP
+cpu_exec
