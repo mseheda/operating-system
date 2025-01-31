@@ -1,0 +1,37 @@
+DEBUG_OFF
+label input_prompt
+    write "Enter your command: " to DISPLAY_BUFFER
+    write COLOR_MAGENTA to DISPLAY_COLOR
+    write OP_DISPLAY_LN to REG_OP
+    cpu_exec
+
+    write OP_READ_INPUT to REG_OP
+    write COLOR_GREEN to DISPLAY_COLOR
+    cpu_exec
+    copy KEYBOARD_BUFFER to REG_A
+
+    write "exit" to REG_B
+    write OP_CMP_EQ to REG_OP
+    cpu_exec
+    jump_if label:end_program
+
+    write "red" to REG_B
+    write OP_CMP_EQ to REG_OP
+    cpu_exec
+    jump_if label:red_output
+
+    copy REG_A to DISPLAY_BUFFER
+    write OP_DISPLAY_LN to REG_OP
+    cpu_exec
+    jump label:input_prompt
+
+    label red_output
+    write COLOR_RED to DISPLAY_COLOR
+    copy REG_A to DISPLAY_BUFFER
+    write OP_DISPLAY_LN to REG_OP
+    cpu_exec
+    jump label:input_prompt
+
+label end_program
+    write OP_HALT to REG_OP
+    cpu_exec
