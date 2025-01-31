@@ -1,0 +1,58 @@
+DEBUG_OFF
+
+var s1
+var s2
+var operator
+var plus
+var result
+
+write "+" to var:plus
+
+write "Enter first operand: " to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+write OP_READ_INPUT to REG_OP
+cpu_exec
+copy KEYBOARD_BUFFER to var:s1
+
+write "Enter operator (+): " to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+write OP_READ_INPUT to REG_OP
+cpu_exec
+copy KEYBOARD_BUFFER to var:operator
+
+write "Enter second operand: " to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+write OP_READ_INPUT to REG_OP
+cpu_exec
+copy KEYBOARD_BUFFER to var:s2
+
+copy var:operator to REG_A
+copy var:plus to REG_B
+write OP_CMP_EQ to REG_OP
+cpu_exec
+jump_if label:do_add
+
+write "Error." to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+jump label:end_calc
+
+label do_add
+copy var:s1 to REG_A
+copy var:s2 to REG_B
+write OP_ADD to REG_OP
+cpu_exec
+copy REG_RES to var:result
+write "Result: " to DISPLAY_BUFFER
+write OP_DISPLAY to REG_OP
+cpu_exec
+copy var:result to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+
+label end_calc
+write OP_HALT to REG_OP
+cpu_exec
