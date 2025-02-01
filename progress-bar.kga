@@ -1,0 +1,93 @@
+DEBUG_OFF
+
+var tickCount
+var delay
+var ticksCompleted
+var i
+
+write "Enter number of ticks:" to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+write OP_READ_INPUT to REG_OP
+cpu_exec
+copy KEYBOARD_BUFFER to var:tickCount
+
+write "Enter delay between ticks (sec):" to DISPLAY_BUFFER
+write OP_DISPLAY_LN to REG_OP
+cpu_exec
+write OP_READ_INPUT to REG_OP
+cpu_exec
+copy KEYBOARD_BUFFER to var:delay
+
+write 0 to var:ticksCompleted
+
+label progress_loop
+    copy var:ticksCompleted to REG_A
+    copy var:tickCount to REG_B
+    write OP_CMP_LE to REG_OP
+    cpu_exec
+    jump_if label:draw_progress
+    jump label:done
+
+label draw_progress
+    write "\rProgress bar: [" to DISPLAY_BUFFER
+    write OP_DISPLAY to REG_OP
+    cpu_exec
+
+    write 0 to var:i
+label cell_loop
+    copy var:i to REG_A
+    copy var:tickCount to REG_B
+    write OP_CMP_LT to REG_OP
+    cpu_exec
+    jump_if label:print_cell
+    jump label:after_cells
+label print_cell
+    copy var:i to REG_A
+    copy var:ticksCompleted to REG_B
+    write OP_CMP_LT to REG_OP
+    cpu_exec
+    jump_if label:print_green
+    write COLOR_MAGENTA to DISPLAY_COLOR
+    write "█" to DISPLAY_BUFFER
+    write OP_DISPLAY to REG_OP
+    cpu_exec
+    jump label:inc_cell
+label print_green
+    write COLOR_GREEN to DISPLAY_COLOR
+    write "█" to DISPLAY_BUFFER
+    write OP_DISPLAY to REG_OP
+    cpu_exec
+label inc_cell
+    copy var:i to REG_A
+    write OP_INCR to REG_OP
+    cpu_exec
+    copy REG_RES to var:i
+    jump label:cell_loop
+label after_cells
+    write COLOR_MAGENTA to DISPLAY_COLOR
+    write "]" to DISPLAY_BUFFER
+    write OP_DISPLAY to REG_OP
+    cpu_exec
+
+    copy var:delay to REG_A
+    write OP_NOP to REG_OP
+    cpu_exec
+
+    copy var:ticksCompleted to REG_A
+    write OP_INCR to REG_OP
+    cpu_exec
+    copy REG_RES to var:ticksCompleted
+
+    jump label:progress_loop
+
+label done
+    write "\n" to DISPLAY_BUFFER
+    write OP_DISPLAY_LN to REG_OP
+    cpu_exec
+    write "Progress complete!" to DISPLAY_BUFFER
+    write COLOR_YELLOW to DISPLAY_COLOR
+    write OP_DISPLAY_LN to REG_OP
+    cpu_exec
+    write OP_HALT to REG_OP
+    cpu_exec
